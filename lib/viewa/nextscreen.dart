@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class NextScreen extends StatelessWidget {
-  // const NextScreen({Key? key}) : super(key: key);
-  final productController = Get.find<ProductController>();
+    final productController = Get.find<ProductController>();
 
   @override
   Widget build(BuildContext context) {

@@ -14,7 +14,7 @@ class ProductDao {
   //String x = 'abcd';
   // A Store with int keys and Map<String, dynamic> values.
   // This Store acts like a persistent map, values of which are Fruit objects converted to Map
-  final productStore = intMapStoreFactory.store(PRODUCT_STORE_NAME);
+  final _productStore = intMapStoreFactory.store(PRODUCT_STORE_NAME);
 
   // Private getter to shorten the amount of code needed to get the
   // singleton instance of an opened database.
@@ -24,31 +24,53 @@ class ProductDao {
 
   Future insert(Welcome product) async {
     //  await Future.delayed(const Duration(milliseconds: 500));
-    await productStore.add(await _db, product.toJson());
+    await _productStore.add(await _db, product.toJson());
 
     //  await _productStore.record(product.toJson()).put(_db, 'my_data');
   }
 
   Future update(Welcome product) async {
     // await Future.delayed(const Duration(milliseconds: 500));
-    // final finder = Finder(filter: Filter.byKey(product.id));
-    Finder finder = Finder(filter: Filter.equals('key', product.id));
-    await productStore.update(await _db, product.toJson());
-    developer.log("default ", name: "entered dao");
-    developer.log("default ", name: "${product.id}");
-
-    //   getAllSortedById();
+    final finder = Finder(filter: Filter.byKey(product.id));
+    //  Finder finder = Finder(filter: Filter.equals('key', product.id));
+//    final Finder finder = Finder(filter: Filter.equals('userName', userName));
+    // final result =
+    developer.log("inside main before uodate ", name: "${product.id}");
+    await _productStore.update(await _db, product.toJson(), finder: finder);
+    //  await productStore.record(product.id).put(await _db, product.toJson());
+    //   developer.log("default ", name: "entered dao");
+    developer.log("inside main after uodate ", name: "${product.id}");
   }
 
   Future delete(Welcome product) async {
     //  await Future.delayed(const Duration(milliseconds: 500));
     final finder = Finder(filter: Filter.byKey(product.id));
-    await productStore.delete(
+    await _productStore.delete(
       await _db,
       finder: finder,
     );
 
     //  getAllSortedById();
+  }
+
+  Future<List<Welcome>> getAllSortedById() async {
+    // Finder object can also sort data.
+    //   await Future.delayed(const Duration(milliseconds: 500));
+    final finder = Finder(sortOrders: [
+      SortOrder('id'),
+    ]);
+
+    final recordSnapshots = await _productStore.find(
+      await _db,
+      finder: finder,
+    );
+
+    return recordSnapshots.map((snapshot) {
+      final product = Welcome.fromJson(snapshot.value);
+      // An ID is a key of a record from the database.
+      product.id = snapshot.key;
+      return product;
+    }).toList();
   }
 
   Future debugDatabaseProduct() async {
@@ -57,7 +79,7 @@ class ProductDao {
       SortOrder('id'),
     ]);
 
-    final recordSnapshots = await productStore.find(
+    final recordSnapshots = await _productStore.find(
       await _db,
       finder: finder,
     );

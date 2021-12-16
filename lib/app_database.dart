@@ -45,18 +45,3 @@ class AppDatabase {
     _dbOpenCompleter.complete(database);
   }
 }
-
-/*
-Future _openDatabase() async {
-  // Get a platform-specific directory where persistent app data can be stored
-  //  final appDocumentDir = await getApplicationDocumentsDirectory();
-  // Path with the form: /platform-specific-directory/demo.db
-  final dbPath = 'sample.db';
-  DatabaseFactory dbFactory = databaseFactoryIo;
-  _database = await dbFactory.openDatabase(dbPath);
-  // Any code awaiting the Completer's future will now start executing
-  _dbOpenCompleter.complete(database);
-}
-}
-
-*/

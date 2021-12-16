@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:apihttp/viewa/homepage.dart';
 import 'package:apihttp/viewa/nextscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:http/http.dart';
-import 'package:sizer/sizer.dart';
 
-import 'api_service.dart';
+import 'package:sizer/sizer.dart';
 
 void main() {
   runApp(MyApp());

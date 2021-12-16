@@ -8,15 +8,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:sizer/sizer.dart';
-
-import '../product_dao.dart';
 import 'nextscreen.dart';
 
 class HomePage extends StatelessWidget {
-  // const ({Key? key}) : super(key: key);
   final ProductController productController = Get.put(ProductController());
 
-//  List<Welcome> list = <Welcome>[].obs;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,18 +40,10 @@ class HomePage extends StatelessWidget {
                               FloatingActionButton(
                                   backgroundColor: Colors.transparent,
                                   onPressed: () {
-                                    //       Obx(() {
                                     Random random = new Random();
                                     int randomNumber = random.nextInt(100);
                                     productController
                                         .insertProducts(randomNumber);
-                                    /*   setState(() {
-                                      productController.productDao
-                                          .getAllSortedById();
-                                    });*/
-                                    /*   productController.productDao
-                                        .getAllSortedById();*/
-                                    //               });
                                   },
                                   child:
                                       SvgPicture.asset("assets/Hamburger.svg")),
@@ -267,43 +255,40 @@ class HomePage extends StatelessWidget {
                                 height: 20,
                               ),
                               SafeArea(
-                                child: FutureBuilder<List<Welcome>>(
-                                    future:
-                                        productController.getAllSortedById(),
-                                    builder: (context, future) {
-                                      if (!future.hasData)
-                                        return CircularProgressIndicator(); // Display empty container if the list is empty
-                                      else {
-                                        List<Welcome> lists = future.data;
-                                        return GetBuilder<ProductController>(
-                                            init: ProductController(),
-                                            builder: (productController) {
-                                              return ListView.builder(
-                                                  physics: ScrollPhysics(),
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  shrinkWrap: true,
-                                                  itemCount: lists.length,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return ListTile(
-                                                      leading: Text(lists[index]
-                                                          .id
-                                                          .toString()),
-                                                      title: Text(
-                                                          lists[index].title),
-                                                      /*  subtitle:
+                                  child: GetBuilder<ProductController>(
+                                init: ProductController(),
+                                builder: (productController) {
+                                  return FutureBuilder<List<Welcome>>(
+                                      future: productController.productDao
+                                          .getAllSortedById(),
+                                      builder: (context, future) {
+                                        if (!future.hasData)
+                                          return CircularProgressIndicator(); // Display empty container if the list is empty
+                                        else {
+                                          List<Welcome> lists = future.data;
+                                          return ListView.builder(
+                                              physics: ScrollPhysics(),
+                                              scrollDirection: Axis.vertical,
+                                              shrinkWrap: true,
+                                              itemCount: lists.length,
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  leading: Text(lists[index]
+                                                      .id
+                                                      .toString()),
+                                                  title:
+                                                      Text(lists[index].title),
+                                                  /*  subtitle:
                                                           Text(list[index].body),*/
-                                                      trailing:
-                                                          _buildUpdateDeleteButtons(
-                                                              lists[index]),
-                                                    );
-                                                  });
-                                            });
-                                        //    );
-                                      }
-                                    }),
-                              )
+                                                  trailing: buildRow(lists,
+                                                      index, productController),
+                                                );
+                                              });
+                                          //    );
+                                        }
+                                      });
+                                },
+                              ))
                             ]),
                           );
                         }
@@ -319,82 +304,28 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Row _buildUpdateDeleteButtons(Welcome displayedProduct) {
+  Row buildRow(
+      List<Welcome> lists, int index, ProductController productController) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         IconButton(
-          icon: Icon(Icons.refresh),
-          onPressed: () {
-            /*   Random random = new Random();
-            int randomNumber = random.nextInt(100);
-            developer.log("default ", name: "entered home");*/
-            productController.updateProducts(displayedProduct);
-            /*  setState(() {
-              productController.productDao.getAllSortedById();
-            });*/
-            //      productController.product.obs;
-            //          _productBloc.add(UpdateWithRandomProduct(displayedProduct));
-          },
-        ),
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              developer.log("before update ", name: "${lists[index].id}");
+              lists[index].title = lists[index].title + "abc";
+              //       lists[index].id = lists[index].id + 1;
+              developer.log("value change ", name: "${lists[index].id}");
+              productController.updateProducts(lists[index]);
+              developer.log("after update ", name: "${lists[index].id}");
+            }),
         IconButton(
           icon: Icon(Icons.delete_outline),
           onPressed: () {
-            productController.deleteProducts(displayedProduct);
-            //    productController.productDao.getAllSortedById();
-
-            /*   setState(() {
-              //      Future.delayed(const Duration(milliseconds: 500));
-              productController.productDao.getAllSortedById();
-            });*/
-            //    productController.product.obs;
-            //   productController.productDao.obs;
-            //        _productBloc.add(DeleteProduct(displayedProduct));
+            productController.deleteProducts(lists[index]);
           },
         ),
       ],
     );
   }
 }
-
-/*
-SafeArea(
-child: Obx(
-() {
-if (productController.isLoading.value) {
-return Center(
-child:
-CircularProgressIndicator());
-} else {
-return Container(
-height: 60.h,
-child: ListView.builder(
-*/
-/*  physics:
-                                        const AlwaysScrollableScrollPhysics(),*/ /*
-
-itemCount: productController
-    .product.length,
-//     scrollDirection: Axis.vertical,
-//    shrinkWrap: true,
-itemBuilder:
-(BuildContext context,
-int index) {
-return ListTile(
-title: Text(productController
-    .product[index].title),
-subtitle: Text(
-productController
-    .product[index].body),
-trailing:
-_buildUpdateDeleteButtons(
-productController
-    .product[index]),
-);
-},
-),
-);
-}
-},
-),
-)*/
